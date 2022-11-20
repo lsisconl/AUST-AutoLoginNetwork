@@ -1,0 +1,2 @@
+G:\RiderProjects\AutoLoginNetwork\bin\Release\netcoreapp3.1\win-x86\publish\AutoLoginNetwork.pdb
+G:\RiderProjects\AutoLoginNetwork\bin\Release\netcoreapp3.1\win-x86\publish\AutoLoginNetwork.exe

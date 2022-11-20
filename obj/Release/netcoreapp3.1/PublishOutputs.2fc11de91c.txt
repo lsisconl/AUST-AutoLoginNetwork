@@ -1,0 +1,4 @@
+G:\RiderProjects\AutoLoginNetwork\bin\Release\netcoreapp3.1\publish\AutoLoginNetwork.exe
+G:\RiderProjects\AutoLoginNetwork\bin\Release\netcoreapp3.1\publish\AutoLoginNetwork.dll
+G:\RiderProjects\AutoLoginNetwork\bin\Release\netcoreapp3.1\publish\AutoLoginNetwork.deps.json
+G:\RiderProjects\AutoLoginNetwork\bin\Release\netcoreapp3.1\publish\AutoLoginNetwork.runtimeconfig.json

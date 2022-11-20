@@ -1,0 +1,1 @@
+G:\RiderProjects\AutoLoginNetwork\bin\Release\netcoreapp3.1\publish\AutoLoginNetwork.exe
