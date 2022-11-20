@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "AutoLoginNetwork/1.0.0": {
+        "runtime": {
+          "AutoLoginNetwork.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AutoLoginNetwork/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

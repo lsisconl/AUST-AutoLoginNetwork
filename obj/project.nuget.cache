@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "MJlLOVUAV0mDFqDxmQ4R6d86WrQqurAXz5oPz8EU/eZdXF4zP0++pgOP677xRDc0BieKQd6xow7+dn7hEf6uMw==",
+  "dgSpecHash": "hsIdfVM2LDQMdYQoDBWSbNFlAzUxqUmrbujNhAplOeWSMzrImLHedIsyodzK1ypJGB/TCbUhhP2KxgAXKls9hA==",
   "success": true,
   "projectFilePath": "G:\\RiderProjects\\AutoLoginNetwork\\AutoLoginNetwork.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\siscon\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.17\\microsoft.netcore.app.host.win-x64.5.0.17.nupkg.sha512",
+    "C:\\Users\\siscon\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\5.0.0\\microsoft.aspnetcore.app.ref.5.0.0.nupkg.sha512",
+    "C:\\Users\\siscon\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\5.0.0\\microsoft.windowsdesktop.app.ref.5.0.0.nupkg.sha512",
+    "C:\\Users\\siscon\\.nuget\\packages\\microsoft.netcore.app.ref\\5.0.0\\microsoft.netcore.app.ref.5.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
