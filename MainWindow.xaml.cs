@@ -34,14 +34,7 @@ namespace AutoLoginNetwork
         public static string passwordPath = applicationPath + "\\password.config";
         public MainWindow()
         {
-            InitializeComponent();
-            //判断当前登录用户是否为管理员
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            if (principal.IsInRole(WindowsBuiltInRole.Administrator))
-            {
-                RunAtStart();
-            }
+            InitializeComponent();   
             if (File.Exists(passwordPath))
             {
                 StreamReader sr = new StreamReader(passwordPath, Encoding.Default);
@@ -56,10 +49,6 @@ namespace AutoLoginNetwork
                     IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
                     invokeProv.Invoke();
                 }
-            }
-            else
-            {
-                MessageBox.Show("检测到您是第一次打开此程序，添加程序自启动时需要使用管理员运行此程序\n作者：siscon\nGithub:https://github.com/lsisconl/AUST-AutoLoginNetwork", "提示");
             }
         }
 
@@ -100,7 +89,7 @@ namespace AutoLoginNetwork
                     }
                     Task.Run(() =>
                     {
-                        Thread.Sleep(3000);
+                        Thread.Sleep(2000);
                         KillMessageBox();
                     });
                     MessageBox.Show("登陆成功","提示");
@@ -117,12 +106,55 @@ namespace AutoLoginNetwork
             }
         }
 
+        public void OnAddSelfStartButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (JudgeIfAdmin())
+            {
+                RunAtStart();
+            }
+            else
+            {
+                MessageBox.Show("没有管理员权限，请用管理员启动程序");
+            }
+        }
+
+        public void OnDeleteSelfStartButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (JudgeIfAdmin())
+            {
+                DeleteRunAtStart();
+            }
+            else
+            {
+                MessageBox.Show("没有管理员权限，请用管理员启动程序");
+            }
+        }
+
+        public void AboutButtonClick(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("此软件完全免费，已开源至Github。作者：siscon\nGithub:https://github.com/lsisconl/AUST-AutoLoginNetwork", "提示");
+        }
+
+        bool JudgeIfAdmin()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+            {
+                return true;
+            }
+            return false;
+        }
 
         private void RunAtStart()
         {
             RunCmd($"schtasks /delete /tn AutoLoginNetwork /F");
             MessageBox.Show(RunCmd($"schtasks /Create /SC ONEVENT /MO \" *[System[(EventID = 4624)]] and *[EventData[Data[9] = \"7\"]]\" /EC Security /TN \"AutoLoginNetwork\" /TR \"{applicationFullPath}\""), "提示");
-            MessageBox.Show("添加自启动成功", "提示");
+        }
+
+        private void DeleteRunAtStart()
+        {
+            MessageBox.Show(RunCmd($"schtasks /delete /tn AutoLoginNetwork /F"));
         }
 
 
@@ -136,7 +168,7 @@ namespace AutoLoginNetwork
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
             p.StartInfo.CreateNoWindow = true;
-            p.Start();   
+            p.Start();
             return p.StandardOutput.ReadToEnd();
         }
 

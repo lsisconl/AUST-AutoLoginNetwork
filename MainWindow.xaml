@@ -19,5 +19,8 @@
             <ComboBoxItem Content="联通"/>
             <ComboBoxItem Content="移动"/>
         </ComboBox>
+        <Button x:Name="addSelfStart" Content="添加自启动" HorizontalAlignment="Left" Margin="57,301,0,0" VerticalAlignment="Top" Height="31" Width="67" Click="OnAddSelfStartButtonClick"/>
+        <Button x:Name="deleteSelfStart" Content="删除自启动" HorizontalAlignment="Left" Margin="57,343,0,0" VerticalAlignment="Top" Height="31" Width="67" Click="OnDeleteSelfStartButtonClick"/>
+        <Button x:Name="about" Content="关于" HorizontalAlignment="Left" Margin="549,383,0,0" VerticalAlignment="Top" Height="23" Width="31" Click="AboutButtonClick"/>
     </Grid>
 </Window>
