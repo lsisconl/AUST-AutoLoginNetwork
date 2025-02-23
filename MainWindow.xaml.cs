@@ -1,61 +1,54 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AutoLoginNetwork
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        public static string applicationFullPath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-        public static string shortFileName = applicationFullPath.Substring(applicationFullPath.LastIndexOf('\\') + 1);
-        public static string applicationPath = applicationFullPath.Replace($"\\{shortFileName}", "");
-        public static string passwordPath = applicationPath + "\\password.config";
+        private static readonly string ApplicationFullPath = Process.GetCurrentProcess().MainModule?.FileName;
+        private static readonly string ShortFileName = ApplicationFullPath.Substring(ApplicationFullPath.LastIndexOf('\\') + 1);
+        private static readonly string ApplicationPath = ApplicationFullPath.Replace($"\\{ShortFileName}", "");
+        private static readonly string PasswordPath = ApplicationPath + "\\password.config";
+        private static readonly HttpClient HttpClient = new HttpClient();
         public MainWindow()
         {
             InitializeComponent();   
-            if (File.Exists(passwordPath))
+            EncodingProvider provider = CodePagesEncodingProvider.Instance;
+            Encoding.RegisterProvider(provider);
+            if (File.Exists(PasswordPath))
             {
-                StreamReader sr = new StreamReader(passwordPath, Encoding.Default);
+                StreamReader sr = new StreamReader(PasswordPath, Encoding.Default);
                 var text = sr.ReadToEnd().Split("|");
                 sr.Close();
                 if(text.Length==3 && int.TryParse(text[2],out var value))
                 {
                     account.Text = text[0];
-                    password.Text = text[1];
+                    password.Password = text[1];
                     combobox.SelectedIndex = value;
                     ButtonAutomationPeer peer = new ButtonAutomationPeer(button);
-                    IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                    invokeProv.Invoke();
+                    if (peer.GetPattern(PatternInterface.Invoke) is IInvokeProvider invokeProv)
+                    {
+                        invokeProv.Invoke();
+                    }
                 }
             }
         }
 
-        public void ButtonClick(object sender, RoutedEventArgs e)
-        {
-            string type = "aust";
-           switch(combobox.SelectedIndex)
+        private async void ButtonClick(object sender, RoutedEventArgs e)
+        { 
+            string type;
+            switch(combobox.SelectedIndex)
             {
                 case 0:
                     type = "jzg";
@@ -75,16 +68,17 @@ namespace AutoLoginNetwork
             }
             try
             {
-                var content = GetHttpResponse($"http://10.255.0.19/drcom/login?callback=dr1003&DDDDD={account.Text}%40{type}&upass={password.Text}&0MKKey=123456");
+                var content = await GetHttpResponseAsync($"http://10.255.0.19/drcom/login?callback=dr1003&DDDDD={account.Text}%40{type}&upass={password.Password}&0MKKey=123456");
                 if (content.Contains("\"result\":1"))
                 {
-                    if (!File.Exists(passwordPath))
+                    if (!File.Exists(PasswordPath))
                     {
-                        File.Create(passwordPath).Close();
+                        File.Create(PasswordPath).Close();
                     }
-                    using (FileStream fs = new FileStream(passwordPath, FileMode.OpenOrCreate, FileAccess.Write))
+
+                    await using (FileStream fs = new FileStream(PasswordPath, FileMode.OpenOrCreate, FileAccess.Write))
                     {
-                        byte[] buffer = Encoding.UTF8.GetBytes($"{account.Text}|{password.Text}|{combobox.SelectedIndex}");
+                        byte[] buffer = Encoding.UTF8.GetBytes($"{account.Text}|{password.Password}|{combobox.SelectedIndex}");
                         fs.Write(buffer, 0, buffer.Length);
                     }
                     Task.Run(() =>
@@ -149,7 +143,7 @@ namespace AutoLoginNetwork
         private void RunAtStart()
         {
             RunCmd($"schtasks /delete /tn AutoLoginNetwork /F");
-            MessageBox.Show(RunCmd($"schtasks /Create /SC ONEVENT /MO \" *[System[(EventID = 4624)]] and *[EventData[Data[9] = \"7\"]]\" /EC Security /TN \"AutoLoginNetwork\" /TR \"{applicationFullPath}\""), "提示");
+            MessageBox.Show(RunCmd($"schtasks /Create /SC ONEVENT /MO \" *[System[(EventID = 4624)]] and *[EventData[Data[9] = \"7\"]]\" /EC Security /TN \"AutoLoginNetwork\" /TR \"{ApplicationFullPath}\""), "提示");
         }
 
         private void DeleteRunAtStart()
@@ -172,7 +166,7 @@ namespace AutoLoginNetwork
             return p.StandardOutput.ReadToEnd();
         }
 
-        public string GetHttpResponse(string url)
+        /*private string GetHttpResponse(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
@@ -185,15 +179,23 @@ namespace AutoLoginNetwork
             myStreamReader.Close();
             myResponseStream.Close();
             return retString;
-        }
+        }*/
 
+        private async Task<string> GetHttpResponseAsync(string url)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            HttpResponseMessage response = await HttpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        
         [DllImport("user32.dll", EntryPoint = "FindWindow", CharSet = CharSet.Auto)]
-        private extern static IntPtr FindWindow(string lpClassName, string lpWindowName);
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        private static extern int PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
-        public const int WM_CLOSE = 0x10;
+        private const int WmClose = 0x10;
 
         private void KillMessageBox()
         {
@@ -202,7 +204,7 @@ namespace AutoLoginNetwork
             if (ptr != IntPtr.Zero)
             {
                 //查找到窗口则关闭
-                PostMessage(ptr, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                PostMessage(ptr, WmClose, IntPtr.Zero, IntPtr.Zero);
             }
         }
     }

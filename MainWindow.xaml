@@ -10,7 +10,7 @@
         <Label  Content="账号" HorizontalAlignment="Left" Margin="45,70,0,0" VerticalAlignment="Top" Height="44" Width="66" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <Label Content="密码" HorizontalAlignment="Left" Margin="45,144,0,0" VerticalAlignment="Top" Height="42" Width="66" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <TextBox x:Name="account" HorizontalAlignment="Left" Margin="280,70,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="255" Height="44" FontSize="34" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" MaxLength="10"/>
-        <TextBox x:Name="password" HorizontalAlignment="Left" Margin="280,144,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="255" Height="42" VerticalContentAlignment="Center" FontSize="34"/>
+        <PasswordBox  x:Name="password" HorizontalAlignment="Left" Margin="280,144,0,0"  VerticalAlignment="Top" Width="255" Height="42" VerticalContentAlignment="Center" FontSize="34"/>
         <Button x:Name="button" Content="登录" HorizontalAlignment="Center" Margin="0,356,0,0" VerticalAlignment="Top" Height="36" Width="72" FontSize="20" Click="ButtonClick"/>
         <Label Content="类型" HorizontalAlignment="Left" Margin="45,221,0,0" VerticalAlignment="Top" Height="42" Width="66" FontSize="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <ComboBox x:Name="combobox" HorizontalAlignment="Left" Margin="280,221,0,0" VerticalAlignment="Top" Width="255" Height="42" FontSize="22" VerticalContentAlignment="Center" SelectedIndex="0">
